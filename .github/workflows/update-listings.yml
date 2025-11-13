@@ -1,0 +1,27 @@
+name: Update Listings
+
+on:
+  schedule:
+    # Runs every day at 3 AM UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # allows manual trigger
+
+jobs:
+  run-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # or your preferred Node.js version
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run updateListings.js
+        run: node updateListings.js
