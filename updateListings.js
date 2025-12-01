@@ -1,8 +1,8 @@
 import fetch from "node-fetch";
 
-const BOT_ID = "d7c63fad-455b-48f2-b5a9-e1aa70b0a11e";             // Your Botpress bot ID
-const TOKEN = "bp_pat_3656eEvEX2jcOYqb6GahD31IgAa4jeyb5zzV";        // Your Botpress Admin token
-const TABLE = "ListingsTable";                                      // Your table name
+const BOT_ID = "d7c63fad-455b-48f2-b5a9-e1aa70b0a11e";             
+const TOKEN = "bp_pat_3656eEvEX2jcOYqb6GahD31IgAa4jeyb5zzV";        
+const TABLE = "ListingsTable";                                      
 const LISTINGS_API = "https://irres-listings-api.onrender.com/api/listings";
 
 async function updateListings() {
@@ -15,7 +15,9 @@ async function updateListings() {
       throw new Error("No listings found from API.");
     }
     
-    // --- Step 1: Delete all existing rows ---
+    // -------------------------------------------------------
+    // STEP 1 — DELETE ALL EXISTING ROWS
+    // -------------------------------------------------------
     console.log("Deleting all rows...");
     const deleteRes = await fetch(`https://api.botpress.cloud/v1/tables/${TABLE}/rows/delete`, {
       method: "POST",
@@ -26,12 +28,15 @@ async function updateListings() {
       },
       body: JSON.stringify({ deleteAllRows: true })
     });
-    
+
     const deleteData = await deleteRes.json();
     console.log(`Deleted rows:`, deleteData);
     
-    // --- Step 2: Insert new rows ---
+    // -------------------------------------------------------
+    // STEP 2 — INSERT NEW ROWS
+    // -------------------------------------------------------
     console.log(`Inserting ${data.listings.length} new rows...`);
+
     const rows = data.listings.map(l => ({
       listing_id: l.listing_id,
       listing_url: l.listing_url,
@@ -40,14 +45,23 @@ async function updateListings() {
       location: l.location || "",
       description: l.description || "",
       listing_type: l.listing_type || "",
-      // NEW FIELDS
+
+      // ----------------------------
+      // New variables you added
+      // ----------------------------
       Title: l.Title || "",
       Button1_Label: l.Button1_Label || "Bekijk het op onze website",
-      Button2_Label: l.Button2_Label || "Contacteer Irres",
+      Button2_Label: l.Button2_Label || `Contacteer ${l.firstname || ""} - Irres`,
       Button2_email: l.Button2_email || "",
+
+      // ----------------------------
+      // NEW: details object as JSON
+      // ----------------------------
+      details: JSON.stringify(l.details || {}),
+
       last_updated: new Date().toISOString()
     }));
-    
+
     const insertRes = await fetch(`https://api.botpress.cloud/v1/tables/${TABLE}/rows`, {
       method: "POST",
       headers: {
@@ -64,7 +78,7 @@ async function updateListings() {
     
   } catch (err) {
     console.error("❌ Error updating listings:", err.message);
-    process.exit(1); // Exit with error code for GitHub Actions to detect failure
+    process.exit(1); 
   }
 }
 
