@@ -50,8 +50,8 @@ async function updateListings() {
       // New variables you added
       // ----------------------------
       Title: l.Title || "",
-      Button1_Label: l.Button1_Label || "Bekijk het op onze website",
-      Button2_Label: l.Button2_Label || `Contacteer ${l.firstname || ""} - Irres`,
+      Button1_Label: l.Button1_Label || "",
+      Button2_Label: l.Button2_Label || "",
       Button2_email: l.Button2_email || "",
       Button3_Label: l.Button3_Label || "",
       Button3_Value: l.Button3_Value || "",
