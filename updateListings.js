@@ -15,9 +15,6 @@ async function updateListings() {
       throw new Error("No listings found from API.");
     }
     
-    // -------------------------------------------------------
-    // STEP 1 — DELETE ALL EXISTING ROWS
-    // -------------------------------------------------------
     console.log("Deleting all rows...");
     const deleteRes = await fetch(`https://api.botpress.cloud/v1/tables/${TABLE}/rows/delete`, {
       method: "POST",
@@ -31,32 +28,27 @@ async function updateListings() {
 
     const deleteData = await deleteRes.json();
     console.log(`Deleted rows:`, deleteData);
-    
-    // -------------------------------------------------------
-    // STEP 2 — INSERT NEW ROWS
-    // -------------------------------------------------------
+
     console.log(`Inserting ${data.listings.length} new rows...`);
 
     const rows = data.listings.map(l => ({
       listing_id: l.listing_id,
       listing_url: l.listing_url,
-      photo_url: l.photo_url || "",
-      price: l.price || "",
-      location: l.location || "",
-      description: l.description || "",
-      listing_type: l.listing_type || "",
+      photo_url: l.photo_url || null,
+      price: l.price || null,
+      location: l.location || null,
+      description: l.description || null,
+      listing_type: l.listing_type || null,
 
-      // ----------------------------
-      // New variables you added
-      // ----------------------------
       Title: l.Title || "",
       Button1_Label: l.Button1_Label || "Bekijk het op onze website",
       Button2_Label: l.Button2_Label || `Contacteer ${l.firstname || ""} - Irres`,
       Button2_email: l.Button2_email || "",
 
-      // ----------------------------
-      // NEW: details object as JSON
-      // ----------------------------
+      // ✅ NEW BUTTON 3 FIELDS
+      Button3_Label: l.Button3_Label || null,
+      Button3_Value: l.Button3_Value || null,
+
       details: JSON.stringify(l.details || {}),
 
       last_updated: new Date().toISOString()
